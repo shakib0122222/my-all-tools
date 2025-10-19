@@ -60,6 +60,7 @@
             display: flex;
             align-items: center;
             font-size: 1.6rem;
+            margin-right: auto; /* Pushes GitHub button to the right */
         }
         .navbar-brand img {
             height: 45px;
@@ -83,6 +84,7 @@
             font-weight: 600;
             text-decoration: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            margin-left: 15px; /* Spacing from brand if they are close on small screens */
         }
         .github-btn:hover {
             background-color: var(--secondary-accent-color);
@@ -274,47 +276,11 @@
             gap: 25px;
         }
 
-        @media (max-width: 991px) {
-            .tools-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
-            }
-            .header-section h1 {
-                font-size: 3rem;
-            }
-            .header-section p {
-                font-size: 1.15rem;
-            }
-            .tool-card {
-                height: 250px; /* Adjust height for 2 columns */
-                padding: 20px;
-            }
-            .tool-card .icon {
-                font-size: 4rem;
-            }
-            .tool-card .tool-title {
-                font-size: 1.4rem;
-            }
-            .tool-card .tool-description {
-                font-size: 0.95rem;
-            }
-            .navbar-nav {
-                flex-direction: row; /* Ensure nav items are horizontal */
-                align-items: center;
-                width: auto;
-            }
-            .navbar-collapse {
-                flex-grow: 0; /* Prevent collapse content from growing unnecessarily */
-            }
-        }
-
+        /* Small screens: Ensure GitHub button stays on the right */
         @media (max-width: 767px) {
-            .tools-grid {
-                grid-template-columns: repeat(2, 1fr); /* 2 columns on phones */
-                gap: 15px;
-            }
             .navbar-brand {
                 font-size: 1.4rem;
+                margin-right: 0; /* Reset margin for smaller screens */
             }
             .navbar-brand img {
                 height: 40px;
@@ -323,6 +289,20 @@
             .github-btn {
                 padding: 10px 16px;
                 font-size: 0.9rem;
+                margin-left: auto; /* Pushes GitHub button to the right */
+            }
+            /* Ensure the navbar itself justifies content space-between to push brand left and github right */
+            .navbar > .container {
+                justify-content: space-between;
+                align-items: center;
+            }
+            .navbar-nav { /* This will actually be the github-btn wrapper in this simplified setup */
+                margin-left: auto; /* Ensure it moves to the right */
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns on phones */
+                gap: 15px;
             }
             .header-section h1 {
                 font-size: 2.5rem;
@@ -349,9 +329,6 @@
                 padding: 8px 14px;
                 font-size: 0.8rem;
             }
-            .navbar-collapse {
-                justify-content: flex-end; /* Push GitHub button to the right */
-            }
         }
 
         @media (max-width: 575px) {
@@ -363,12 +340,32 @@
                 height: auto;
                 min-height: 220px; /* Ensure minimum height even with auto */
             }
-            .navbar-nav {
-                width: 100%;
-                justify-content: center; /* Center GitHub button if only one item */
+            /* For very small screens, stack brand and GitHub vertically */
+            .navbar > .container {
+                flex-direction: column; /* Stack items vertically */
+                align-items: center;
+            }
+            .navbar-brand {
+                margin-bottom: 15px; /* Space below brand */
             }
             .github-btn {
-                margin: 0 auto; /* Center the GitHub button */
+                margin-left: 0; /* Remove auto margin */
+                margin-top: 5px; /* Space above GitHub button */
+            }
+        }
+
+        /* Default styling for larger screens, ensure GitHub button is always on the right */
+        @media (min-width: 768px) {
+            .navbar > .container {
+                display: flex;
+                justify-content: space-between; /* Pushes items to far ends */
+                align-items: center;
+            }
+            .navbar-brand {
+                margin-right: 0; /* No auto margin needed here, flex handles it */
+            }
+            .github-btn {
+                margin-left: 0; /* No extra margin needed */
             }
         }
     </style>
@@ -379,14 +376,12 @@
         <div class="container">
             <a class="navbar-brand" href="#">
                 <img src="https://avatars.githubusercontent.com/u/9919?s=200&v=4" alt="GitHub Logo" id="navbarLogo">
-                
+                My Dev Tools
             </a>
-            <!-- No toggler button needed as there's nothing to collapse except possibly the GitHub button on very small screens -->
-            <div class="navbar-nav ms-auto">
-                <a class="btn github-btn" href="https://github.com/your-username/your-repo" target="_blank">
-                    <i class="fab fa-github me-2"></i>GitHub
-                </a>
-            </div>
+            <!-- GitHub button is now directly inside the container, next to navbar-brand -->
+            <a class="btn github-btn" href="https://github.com/your-username/your-repo" target="_blank">
+                <i class="fab fa-github me-2"></i>GitHub
+            </a>
         </div>
     </nav>
 
@@ -401,7 +396,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; <span id="current-year"></span> My Dev Tools. All rights reserved. Made with <i class="fas fa-heart text-danger"></i> by <a href="https://github.com/your-username" target="_blank">Your Name</a></p>
+            <p>&copy; <span id="current-year"></span> My Dev Tools. All rights reserved. Made with <i class="fas fa-heart text-danger"></i> by <a href="https://github.com/sakibhossain" target="_blank">SAKIB HOSSAIN</a></p>
         </div>
     </footer>
 
@@ -489,13 +484,15 @@
 
         // --- Configuration ---
         const YOUR_GITHUB_AVATAR_URL = "https://avatars.githubusercontent.com/u/9919?s=200&v=4"; // Replace with your GitHub avatar or desired logo URL
-        const YOUR_GITHUB_REPO_URL = "https://github.com/your-username/your-repo"; // Replace with your GitHub repo URL
-        const YOUR_GITHUB_USERNAME = "Your Name"; // Replace with your GitHub username for footer
+        const YOUR_GITHUB_REPO_URL = "https://github.com/sakibhossain"; // Replace with your GitHub repo URL
+        const YOUR_GITHUB_USERNAME = "SAKIB HOSSAIN"; // Replace with your GitHub username for footer
 
         document.querySelector('.github-btn').href = YOUR_GITHUB_REPO_URL;
         navbarLogo.src = YOUR_GITHUB_AVATAR_URL;
-        document.querySelector('footer a').href = `https://github.com/${YOUR_GITHUB_USERNAME}`;
-        document.querySelector('footer a').textContent = YOUR_GITHUB_USERNAME;
+        // Update footer link and text for SAKIB HOSSAIN
+        const footerLinkElement = document.querySelector('footer a');
+        footerLinkElement.href = `https://github.com/sakibhossain`; // Assuming 'sakibhossain' is your GitHub username
+        footerLinkElement.textContent = YOUR_GITHUB_USERNAME;
 
         // Dynamic Colors for cards (using CSS variables)
         const dynamicColors = [
