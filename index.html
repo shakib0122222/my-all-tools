@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Dark mode variables */
+            /* Dark mode variables (default) */
             --background-color: #0d1117; /* GitHub Dark Mode bg */
             --text-color: #c9d1d9; /* Light gray text */
             --card-bg-color: #161b22; /* Slightly lighter dark for cards */
@@ -24,6 +24,9 @@
             --navbar-bg-color: #0d1117; /* Same as background */
             --navbar-border-color: #30363d;
             --header-text-color: #e6edf3; /* Lighter shade for header */
+            --search-bg-color: #21262d;
+            --search-text-color: #c9d1d9;
+            --search-border-color: #444c56;
 
             /* Dynamic card background colors (more vibrant for dark mode) */
             --card-color-1: #bb9af7; /* Lavender */
@@ -36,7 +39,7 @@
             --card-color-8: #ffcd88; /* Light Orange */
         }
 
-        /* Light mode variables */
+        /* Light mode variables (if you decide to re-implement or need it for other elements) */
         body.light-mode {
             --background-color: #f6f8fa;
             --text-color: #24292f;
@@ -47,6 +50,9 @@
             --navbar-bg-color: #ffffff;
             --navbar-border-color: #e1e4e8;
             --header-text-color: #0a0c0e;
+            --search-bg-color: #ffffff;
+            --search-text-color: #24292f;
+            --search-border-color: #d0d7de;
 
             /* Dynamic card background colors for light mode (less saturated) */
             --card-color-1: #d1c4e9;
@@ -93,7 +99,7 @@
             transition: border-color 0.4s ease;
         }
 
-        .github-btn, .dark-mode-toggle {
+        .github-btn, .search-toggle-btn {
             background-color: var(--primary-accent-color);
             color: #ffffff;
             border: none;
@@ -106,22 +112,55 @@
             font-weight: 600;
             text-decoration: none;
         }
-        .github-btn:hover, .dark-mode-toggle:hover {
+        .github-btn:hover, .search-toggle-btn:hover {
             background-color: var(--secondary-accent-color);
             color: #ffffff;
             transform: translateY(-3px) scale(1.02);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .dark-mode-toggle {
+        .search-toggle-btn {
             width: 50px;
             height: 50px;
             padding: 0;
             border-radius: 50%;
             margin-right: 15px;
+            flex-shrink: 0; /* Prevent shrinking on smaller screens */
         }
-        .dark-mode-toggle i {
+        .search-toggle-btn i {
             margin-right: 0;
             font-size: 1.3rem;
+        }
+
+        /* Search input styling */
+        .search-input-container {
+            flex-grow: 1;
+            margin-right: 15px; /* Spacing from GitHub button */
+            max-width: 300px; /* Limit search input width */
+            transition: all 0.3s ease;
+        }
+        .search-input-container.hidden {
+            width: 0;
+            opacity: 0;
+            overflow: hidden;
+            margin-right: 0;
+        }
+        .search-input-container .form-control {
+            background-color: var(--search-bg-color);
+            color: var(--search-text-color);
+            border: 1px solid var(--search-border-color);
+            border-radius: 10px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        .search-input-container .form-control::placeholder {
+            color: var(--search-text-color);
+            opacity: 0.7;
+        }
+        .search-input-container .form-control:focus {
+            background-color: var(--search-bg-color);
+            color: var(--search-text-color);
+            border-color: var(--primary-accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(88, 166, 255, 0.25);
         }
 
         .tool-card {
@@ -144,6 +183,7 @@
             overflow: hidden;
             cursor: pointer;
             z-index: 1;
+            opacity: 0; /* For initial fade-in animation */
         }
         .tool-card::before {
             content: '';
@@ -336,6 +376,29 @@
             .tool-card .tool-description {
                 font-size: 0.95rem;
             }
+            .navbar .ms-auto {
+                flex-direction: row; /* Keep items in a row on smaller screens */
+                justify-content: flex-end; /* Align to end */
+                width: 100%;
+                margin-top: 15px; /* Add some space below brand */
+            }
+            .navbar-nav {
+                flex-direction: row; /* Ensure nav items are horizontal */
+                align-items: center;
+            }
+            .search-input-container {
+                max-width: none; /* Allow search input to take full width if needed */
+                order: 1; /* Place search before GitHub button */
+                margin-top: 10px;
+                margin-bottom: 10px;
+                margin-left: 0;
+            }
+            .search-toggle-btn {
+                order: 2; /* Place toggle button after search input */
+            }
+            .github-btn {
+                order: 3;
+            }
         }
 
         @media (max-width: 767px) {
@@ -350,7 +413,7 @@
                 height: 40px;
                 width: 40px;
             }
-            .dark-mode-toggle {
+            .search-toggle-btn {
                 width: 45px;
                 height: 45px;
                 margin-right: 10px;
@@ -383,6 +446,37 @@
                 padding: 8px 14px;
                 font-size: 0.8rem;
             }
+            .navbar-collapse {
+                flex-grow: 0; /* Prevent collapse content from growing unnecessarily */
+            }
+            .navbar-nav {
+                flex-direction: column; /* Stack items vertically in mobile nav */
+                align-items: flex-end; /* Align to the right */
+            }
+            .navbar-nav .nav-item {
+                width: 100%;
+                text-align: right;
+                margin-top: 10px;
+            }
+            .navbar-nav .nav-item:last-child {
+                margin-right: 0;
+            }
+            .search-input-container {
+                margin-right: 0;
+                margin-left: auto; /* Push search to the right */
+                max-width: 100%; /* Take full width */
+                width: 100%;
+            }
+            .search-input-container.hidden {
+                width: 0; /* Collapse width completely when hidden */
+            }
+            .search-input-container .form-control {
+                width: 100%;
+            }
+            .search-toggle-btn {
+                margin-left: auto; /* Push toggle to the right */
+                margin-right: 0;
+            }
         }
 
         @media (max-width: 575px) {
@@ -393,6 +487,20 @@
             .tool-card {
                 height: auto;
                 min-height: 220px; /* Ensure minimum height even with auto */
+            }
+            .navbar-nav {
+                align-items: center; /* Center align items in a single column */
+            }
+            .search-input-container {
+                margin: 10px auto; /* Center search input */
+            }
+            .search-toggle-btn, .github-btn {
+                margin-left: auto;
+                margin-right: auto;
+                width: fit-content; /* Adjust width to content */
+            }
+            .search-toggle-btn {
+                margin-top: 10px;
             }
         }
     </style>
@@ -410,9 +518,12 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-2 search-input-container hidden" id="searchInputContainer">
+                        <input type="text" class="form-control" id="toolSearch" placeholder="Search tools...">
+                    </li>
                     <li class="nav-item me-2">
-                        <button class="btn dark-mode-toggle" id="darkModeToggle">
-                            <i class="fas fa-moon"></i>
+                        <button class="btn search-toggle-btn" id="searchToggle">
+                            <i class="fas fa-search"></i>
                         </button>
                     </li>
                     <li class="nav-item">
@@ -519,9 +630,11 @@
         ];
 
         const toolsContainer = document.getElementById('tools-container');
-        const darkModeToggle = document.getElementById('darkModeToggle');
         const navbarLogo = document.getElementById('navbarLogo');
         const animatedHeaderText = document.getElementById('animated-header-text');
+        const searchToggle = document.getElementById('searchToggle');
+        const searchInputContainer = document.getElementById('searchInputContainer');
+        const toolSearchInput = document.getElementById('toolSearch');
 
         // --- Configuration ---
         const YOUR_GITHUB_AVATAR_URL = "https://avatars.githubusercontent.com/u/9919?s=200&v=4"; // Replace with your GitHub avatar or desired logo URL
@@ -540,21 +653,23 @@
             'var(--card-color-7)', 'var(--card-color-8)'
         ];
 
-        // --- Dark Mode Toggle ---
-        darkModeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            const isLightMode = document.body.classList.contains('light-mode');
-            darkModeToggle.innerHTML = isLightMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-            localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+        // --- Search Toggle Functionality ---
+        searchToggle.addEventListener('click', () => {
+            searchInputContainer.classList.toggle('hidden');
+            if (!searchInputContainer.classList.contains('hidden')) {
+                toolSearchInput.focus();
+            }
         });
 
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-mode');
-            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        } else {
-            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-        }
+        // --- Filter Tools on Search Input ---
+        toolSearchInput.addEventListener('keyup', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredTools = tools.filter(tool =>
+                tool.title.toLowerCase().includes(searchTerm) ||
+                tool.description.toLowerCase().includes(searchTerm)
+            );
+            renderTools(filteredTools);
+        });
 
         // --- Typewriter Effect for Header ---
         const headerText = animatedHeaderText.textContent;
@@ -570,15 +685,15 @@
         setTimeout(typeWriter, 500);
 
         // --- Render Tools ---
-        function renderTools() {
+        function renderTools(toolsToRender = tools) {
             toolsContainer.innerHTML = ''; // Clear existing tools
 
-            if (tools.length === 0) {
-                toolsContainer.innerHTML = '<p class="text-center text-muted col-12 py-5">No tools available.</p>';
+            if (toolsToRender.length === 0) {
+                toolsContainer.innerHTML = '<p class="text-center text-muted col-12 py-5">No tools found matching your search.</p>';
                 return;
             }
 
-            tools.forEach((tool, index) => {
+            toolsToRender.forEach((tool, index) => {
                 const colorIndex = index % dynamicColors.length;
                 const dynamicColor = dynamicColors[colorIndex];
 
