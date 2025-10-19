@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dev Tools - Animated & Dynamic</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Dark mode variables */
+            --background-color: #0d1117; /* GitHub Dark Mode bg */
+            --text-color: #c9d1d9; /* Light gray text */
+            --card-bg-color: #161b22; /* Slightly lighter dark for cards */
+            --card-border-color: #30363d;
+            --primary-accent-color: #58a6ff; /* GitHub blue accent */
+            --secondary-accent-color: #388bfd; /* Darker GitHub blue */
+            --navbar-bg-color: #0d1117; /* Same as background */
+            --navbar-border-color: #30363d;
+            --header-text-color: #e6edf3; /* Lighter shade for header */
+
+            /* Dynamic card background colors (more vibrant for dark mode) */
+            --card-color-1: #bb9af7; /* Lavender */
+            --card-color-2: #7dcfff; /* Sky Blue */
+            --card-color-3: #ff9e64; /* Orange */
+            --card-color-4: #e0af68; /* Goldish Brown */
+            --card-color-5: #9ece6a; /* Green */
+            --card-color-6: #f7768e; /* Rose */
+            --card-color-7: #c0caf5; /* Pale Blue */
+            --card-color-8: #ffcd88; /* Light Orange */
+        }
+
+        /* Light mode variables */
+        body.light-mode {
+            --background-color: #f6f8fa;
+            --text-color: #24292f;
+            --card-bg-color: #ffffff;
+            --card-border-color: #d0d7de;
+            --primary-accent-color: #0366d6;
+            --secondary-accent-color: #005cc5;
+            --navbar-bg-color: #ffffff;
+            --navbar-border-color: #e1e4e8;
+            --header-text-color: #0a0c0e;
+
+            /* Dynamic card background colors for light mode (less saturated) */
+            --card-color-1: #d1c4e9;
+            --card-color-2: #b3e5fc;
+            --card-color-3: #ffccbc;
+            --card-color-4: #ffe0b2;
+            --card-color-5: #c8e6c9;
+            --card-color-6: #ffcdd2;
+            --card-color-7: #e3f2fd;
+            --card-color-8: #fff3e0;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .navbar {
+            background-color: var(--navbar-bg-color) !important;
+            border-bottom: 1px solid var(--navbar-border-color);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.4);
+            padding-top: 1.2rem;
+            padding-bottom: 1.2rem;
+        }
+        .navbar-brand {
+            color: var(--primary-accent-color) !important;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            font-size: 1.6rem;
+        }
+        .navbar-brand img {
+            height: 45px;
+            width: 45px;
+            border-radius: 50%;
+            margin-right: 12px;
+            border: 3px solid var(--primary-accent-color);
+            transition: border-color 0.4s ease;
+        }
+
+        .github-btn, .dark-mode-toggle {
+            background-color: var(--primary-accent-color);
+            color: #ffffff;
+            border: none;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .github-btn:hover, .dark-mode-toggle:hover {
+            background-color: var(--secondary-accent-color);
+            color: #ffffff;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .dark-mode-toggle {
+            width: 50px;
+            height: 50px;
+            padding: 0;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .dark-mode-toggle i {
+            margin-right: 0;
+            font-size: 1.3rem;
+        }
+
+        .tool-card {
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--card-border-color);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 220px;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease-in-out, background-color 0.4s ease, border-color 0.4s ease;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            cursor: pointer;
+            z-index: 1;
+        }
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: -70%;
+            left: -70%;
+            width: 240%;
+            height: 240%;
+            background: radial-gradient(circle at center, var(--card-glow-color, rgba(88, 166, 255, 0.15)), transparent 75%);
+            opacity: 0;
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            z-index: -1;
+        }
+
+        .tool-card:hover::before {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px) scale(1.04);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border-color: var(--primary-accent-color);
+        }
+        .tool-card .icon-section {
+            text-align: left;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+        .tool-card .icon {
+            font-size: 4rem;
+            background: -webkit-linear-gradient(45deg, var(--card-glow-color), var(--primary-accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 3px 8px rgba(0,0,0,0.4));
+        }
+        .tool-card .tool-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--header-text-color);
+            transition: color 0.4s ease;
+            position: relative;
+            z-index: 2;
+        }
+        .tool-card .tool-description {
+            font-size: 1rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            flex-grow: 1;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+            line-height: 1.5;
+        }
+        .tool-card .launch-btn {
+            background-color: var(--card-glow-color);
+            color: #ffffff;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            align-self: flex-start;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+            text-decoration: none; /* Ensure button text is not underlined */
+        }
+        .tool-card .launch-btn:hover {
+            background-color: var(--secondary-accent-color);
+            transform: translateY(-4px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .header-section {
+            padding: 60px 0;
+            margin-bottom: 50px;
+            border-radius: 25px;
+            overflow: hidden;
+            position: relative;
+            background: radial-gradient(ellipse at bottom, rgba(88, 166, 255, 0.2), transparent 80%);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        .header-section h1 {
+            font-size: 3.8rem;
+            font-weight: 900;
+            color: var(--header-text-color);
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.6);
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+        .header-section h1::after {
+            content: '|';
+            display: inline-block;
+            animation: blink-caret .75s step-end infinite;
+            color: var(--primary-accent-color);
+        }
+        .header-section p {
+            font-size: 1.3rem;
+            color: var(--text-color);
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Typing Animation */
+        @keyframes blink-caret {
+            from, to { border-right-color: transparent }
+            50% { border-right-color: var(--primary-accent-color); }
+        }
+
+        /* Card load-in animation */
+        .tool-card.animate-in {
+            opacity: 0;
+            transform: translateY(40px) scale(0.85);
+            animation: card-fade-in 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes card-fade-in {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .main-content {
+            flex-grow: 1; /* Allow content to grow and push footer down */
+        }
+
+        footer {
+            margin-top: 60px;
+            padding: 30px 0;
+            background-color: var(--navbar-bg-color);
+            border-top: 1px solid var(--navbar-border-color);
+            color: var(--text-color);
+            text-align: center;
+            font-size: 0.9rem;
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.4);
+        }
+        footer a {
+            color: var(--primary-accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: var(--secondary-accent-color);
+            text-decoration: underline;
+        }
+
+
+        /* Responsive adjustments */
+        /* For all screens, we'll try to maintain 3 columns by default */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 300px min width per card */
+            gap: 25px; /* Gap between cards */
+        }
+
+        @media (max-width: 991px) {
+            /* On medium screens (tablets), adjust to 2 columns */
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            .header-section h1 {
+                font-size: 3rem;
+            }
+            .header-section p {
+                font-size: 1.15rem;
+            }
+            .tool-card {
+                height: 200px;
+                padding: 20px;
+            }
+            .tool-card .icon {
+                font-size: 3.5rem;
+            }
+            .tool-card .tool-title {
+                font-size: 1.3rem;
+            }
+            .tool-card .tool-description {
+                font-size: 0.95rem;
+            }
+            .tool-card .launch-btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 767px) {
+            /* On small screens (phones), show 2 columns as requested */
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+            .navbar-brand {
+                font-size: 1.4rem;
+            }
+            .navbar-brand img {
+                height: 40px;
+                width: 40px;
+            }
+            .dark-mode-toggle {
+                width: 45px;
+                height: 45px;
+                margin-right: 10px;
+            }
+            .github-btn {
+                padding: 10px 16px;
+            }
+            .header-section h1 {
+                font-size: 2.5rem;
+            }
+            .header-section p {
+                font-size: 1rem;
+            }
+            .tool-card {
+                height: 180px; /* Adjust height for smaller cards */
+                padding: 15px;
+            }
+            .tool-card .icon {
+                font-size: 3rem;
+            }
+            .tool-card .tool-title {
+                font-size: 1.15rem;
+                margin-bottom: 5px;
+            }
+            .tool-card .tool-description {
+                font-size: 0.85rem;
+                margin-bottom: 15px;
+            }
+            .tool-card .launch-btn {
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 575px) {
+            /* On very small phones, stack to 1 column for readability */
+            .tools-grid {
+                grid-template-columns: repeat(1, 1fr);
+                gap: 15px;
+            }
+            .tool-card {
+                height: auto; /* Auto height to accommodate content better */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="https://avatars.githubusercontent.com/u/9919?s=200&v=4" alt="GitHub Logo" id="navbarLogo">
+                My Dev Tools
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-2">
+                        <button class="btn dark-mode-toggle" id="darkModeToggle">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn github-btn" href="https://github.com/your-username/your-repo" target="_blank">
+                            <i class="fab fa-github me-2"></i>GitHub
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content container mt-5">
+        <div class="header-section text-center">
+            <h1 id="animated-header-text">Your Ultimate Dev Toolkit</h1>
+            <p>A curated collection of handy utilities to boost your productivity.</p>
+        </div>
+
+        <!-- Tool Cards will be dynamically inserted here -->
+        <div class="tools-grid" id="tools-container"></div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; <span id="current-year"></span> My Dev Tools. All rights reserved. Made with <i class="fas fa-heart text-danger"></i> by <a href="https://github.com/your-username" target="_blank">Your Name</a></p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const tools = [
+            {
+                icon: "fas fa-code",
+                title: "JSON Formatter",
+                description: "Prettify & validate JSON data for better readability.",
+                link: "tools/json-formatter.html"
+            },
+            {
+                icon: "fas fa-search",
+                title: "Regex Tester",
+                description: "Test your regular expressions against sample text.",
+                link: "tools/regex-tester.html"
+            },
+            {
+                icon: "fas fa-link",
+                title: "URL Encoder/Decoder",
+                description: "Encode and decode URL parameters for safe web transfer.",
+                link: "tools/url-encoder-decoder.html"
+            },
+            {
+                icon: "fas fa-clock",
+                title: "Cron Job Generator",
+                description: "Generate cron expressions for scheduling tasks easily.",
+                link: "tools/cron-job-generator.html"
+            },
+            {
+                icon: "fas fa-palette",
+                title: "Color Converter",
+                description: "Convert between various color formats (HEX, RGB, HSL).",
+                link: "tools/color-converter.html"
+            },
+            {
+                icon: "fas fa-markdown",
+                title: "Markdown Preview",
+                description: "Render markdown text in real-time for quick review.",
+                link: "tools/markdown-preview.html"
+            },
+            {
+                icon: "fas fa-calculator",
+                title: "Unit Converter",
+                description: "Convert various units of measurement (length, weight, etc.).",
+                link: "tools/unit-converter.html"
+            },
+            {
+                icon: "fas fa-file-invoice",
+                title: "Base64 Encoder/Decoder",
+                description: "Encode and decode Base64 strings.",
+                link: "tools/base64-encoder-decoder.html"
+            },
+            {
+                icon: "fas fa-ruler-combined",
+                title: "CSS Unit Converter",
+                description: "Convert CSS units like px, em, rem, vw, vh.",
+                link: "tools/css-unit-converter.html"
+            },
+            {
+                icon: "fas fa-random",
+                title: "UUID Generator",
+                description: "Generate universally unique identifiers (UUIDs).",
+                link: "tools/uuid-generator.html"
+            },
+            {
+                icon: "fas fa-wifi",
+                title: "Network IP Checker",
+                description: "Check your public IP address and network info.",
+                link: "tools/ip-checker.html"
+            },
+            {
+                icon: "fas fa-compress-alt",
+                title: "Text Compressor",
+                description: "Compress and decompress text data.",
+                link: "tools/text-compressor.html"
+            }
+        ];
+
+        const toolsContainer = document.getElementById('tools-container');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const navbarLogo = document.getElementById('navbarLogo');
+        const animatedHeaderText = document.getElementById('animated-header-text');
+
+        // --- Configuration ---
+        const YOUR_GITHUB_AVATAR_URL = "https://avatars.githubusercontent.com/u/9919?s=200&v=4"; // Replace with your GitHub avatar or desired logo URL
+        const YOUR_GITHUB_REPO_URL = "https://github.com/your-username/your-repo"; // Replace with your GitHub repo URL
+        const YOUR_GITHUB_USERNAME = "Your Name"; // Replace with your GitHub username for footer
+
+        document.querySelector('.github-btn').href = YOUR_GITHUB_REPO_URL;
+        navbarLogo.src = YOUR_GITHUB_AVATAR_URL;
+        document.querySelector('footer a').href = `https://github.com/${YOUR_GITHUB_USERNAME}`;
+        document.querySelector('footer a').textContent = YOUR_GITHUB_USERNAME;
+
+        // Dynamic Colors for cards (using CSS variables)
+        const dynamicColors = [
+            'var(--card-color-1)', 'var(--card-color-2)', 'var(--card-color-3)',
+            'var(--card-color-4)', 'var(--card-color-5)', 'var(--card-color-6)',
+            'var(--card-color-7)', 'var(--card-color-8)'
+        ];
+
+        // --- Dark Mode Toggle ---
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const isLightMode = document.body.classList.contains('light-mode');
+            darkModeToggle.innerHTML = isLightMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+        });
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        }
+
+        // --- Typewriter Effect for Header ---
+        const headerText = animatedHeaderText.textContent;
+        animatedHeaderText.textContent = ''; // Clear initial text
+        let charIndex = 0;
+        function typeWriter() {
+            if (charIndex < headerText.length) {
+                animatedHeaderText.textContent += headerText.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 70); // Typing speed
+            } else {
+                // Optional: Restart animation or keep cursor blinking
+                // setTimeout(() => { charIndex = 0; animatedHeaderText.textContent = ''; typeWriter(); }, 5000);
+            }
+        }
+        // Start typing after a short delay
+        setTimeout(typeWriter, 500);
+
+        // --- Render Tools ---
+        function renderTools() {
+            toolsContainer.innerHTML = ''; // Clear existing tools
+
+            if (tools.length === 0) {
+                toolsContainer.innerHTML = '<p class="text-center text-muted col-12 py-5">No tools available.</p>';
+                return;
+            }
+
+            tools.forEach((tool, index) => {
+                // Assign a dynamic color based on index
+                const colorIndex = index % dynamicColors.length;
+                const dynamicColor = dynamicColors[colorIndex];
+
+                const toolCardHtml = `
+                    <a href="${tool.link}" class="tool-card d-block animate-in" style="animation-delay: ${index * 0.1}s; --card-glow-color: ${dynamicColor};">
+                        <div class="icon-section">
+                            <i class="${tool.icon} icon"></i>
+                        </div>
+                        <div class="content-section">
+                            <h5 class="tool-title">${tool.title}</h5>
+                            <p class="tool-description">${tool.description}</p>
+                        </div>
+                        <div class="button-section mt-auto">
+                            <button class="launch-btn">Launch Tool</button>
+                        </div>
+                    </a>
+                `;
+                toolsContainer.insertAdjacentHTML('beforeend', toolCardHtml);
+            });
+        }
+
+        // --- Initial render ---
+        renderTools();
+
+        // --- Footer Year ---
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
